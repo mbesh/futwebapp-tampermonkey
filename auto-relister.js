@@ -49,11 +49,14 @@ async function relister() {
             lastRelist = 0;
             // pause for 2 seconds
             await timer(2000);
+            lastRelist += 2000;
 
             // Reload transfer list
-            // first load the store
-            gotoLinkController._gotoStore();
-            await timer(5000 + (5000 * Math.random()));
+            // first the home page
+            _appMain.getRootViewController().setGameViewTab(UTGameTabBarController.TabTag.HOME);
+            var homePageWait = Math.trunc(15000 + (5000 * Math.random()));
+            await timer(homePageWait);
+            lastRelist += homePageWait;
             // reload transfer list
             gotoLinkController._gotoTransferList();
         } else {
