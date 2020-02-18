@@ -63,7 +63,8 @@ async function relister() {
                 var homePageWait = Math.trunc(10000 + (35000 * Math.random()));
                 consoleLog.innerHTML = `Randomly loading home page, waiting ${homePageWait}ms and going back.<br/>` + consoleLog.innerHTML;
                 _appMain.getRootViewController().setGameViewTab(UTGameTabBarController.TabTag.HOME);
-                await timer(10000 + (35000 * Math.random()));
+                await homePageWait;
+                lastRelist += homePageWait;
                 // reload transfer list
                 gotoLinkController._gotoTransferList();
             }
