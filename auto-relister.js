@@ -11,9 +11,12 @@
 // @run-at  document-end
 // ==/UserScript==
 
+setInterval(function () {
+  _0x426750 = function _0x426750() {}; // eslint-disable-line no-global-assign, no-undef
+}, 500);
 
 var button = document.createElement("Button");
-var consoleLog = document.createElement("div");
+var cl = document.createElement("div");
 var blueButtonStyle = "top:10px;right:250px;position:absolute;z-index: 9999;background-color:#ADD8E6;border-radius:5px;padding:5px";
 var redButtonStyle = "top:10px;right:250px;position:absolute;z-index: 9999;background-color:#E66666;border-radius:5px;padding:5px";
 
@@ -27,25 +30,33 @@ var gotoLinkController = null;
 // lastRelist starts at 300000 so that when we start the relister for the first time, it will execute.
 var lastRelist = 300000;
 
+
+function consoleLog(str) {
+    let ts = new Date().toISOString();
+    cl.innerHTML = `${ts} ${str}<br/>` + cl.innerHTML;
+    if (cl.innerHTML.length > 100000) {
+        cl.innerHTML = cl.innerHTML.substring(0, 100000);
+    }
+}
 async function relister() {
-    consoleLog.innerHTML = "Relisting ...<br/>" + consoleLog.innerHTML;
+    consoleLog("Starting relist loop ...");
     await timer(5000);
     while (button.started) {
         var relistButton = document.querySelector(selector);
         var waitTime = Math.trunc(45000 + (45000 * Math.random()));
         if(relistButton != null && relistButton.offsetParent != null) {
-            consoleLog.innerHTML = `Found relist button - attempting to relist<br/>` + consoleLog.innerHTML;
+            consoleLog(`Found relist button - attempting to relist`);
             // pause for 2 seconds
             await timer(2000);
             //relist all
             if (lastRelist < 300000) {
                 // we recently sent a relist so wait around 5 minutes
                 var longSleep = Math.trunc(270000 + (60000 * Math.random()));
-                consoleLog.innerHTML = `Last relist was sent ${lastRelist}ms ago. Waiting ${Math.trunc(longSleep/10.0/60.0)/100} minutes before sending relist<br/>` + consoleLog.innerHTML;
+                consoleLog(`Last relist was sent ${lastRelist}ms ago. Waiting ${Math.trunc(longSleep/10.0/60.0)/100} minutes before sending relist`);
                 await timer(300000);
             }
             UTItemService["prototype"]["relistExpiredAuctions"]();
-            console.log(`Relist sent`);
+            consoleLog(`Relist sent`);
             lastRelist = 0;
             // pause for 2 seconds
             await timer(2000);
@@ -55,16 +66,17 @@ async function relister() {
             // first the home page
             _appMain.getRootViewController().setGameViewTab(UTGameTabBarController.TabTag.HOME);
             var homePageWait1 = Math.trunc(15000 + (5000 * Math.random()));
+            consoleLog(`Waiting ${homePageWait1}ms until returning to transfer list`);
             await timer(homePageWait1);
             lastRelist += homePageWait1;
             // reload transfer list
             gotoLinkController._gotoTransferList();
         } else {
-            consoleLog.innerHTML = `Couldn't find relist button or it is not visible.<br/>` + consoleLog.innerHTML;
+            consoleLog(`Couldn't find relist button or it is not visible.`);
             // randomly go to the home page and back to keep session alive (10% chance)
             if (Math.random() * 100 > 90) {
                 var homePageWait2 = Math.trunc(10000 + (35000 * Math.random()));
-                consoleLog.innerHTML = `Randomly loading home page, waiting ${homePageWait}ms and going back.<br/>` + consoleLog.innerHTML;
+                consoleLog(`Randomly loading home page, waiting ${homePageWait2}ms and going back.`);
                 _appMain.getRootViewController().setGameViewTab(UTGameTabBarController.TabTag.HOME);
                 await timer(homePageWait2);
                 lastRelist += homePageWait2;
@@ -72,14 +84,11 @@ async function relister() {
                 gotoLinkController._gotoTransferList();
             }
         }
-        consoleLog.innerHTML = `Waiting ${waitTime}ms before checking again.<br/>` + consoleLog.innerHTML;
-        if (consoleLog.innerHTML.length > 100000) {
-            consoleLog.innerHTML = consoleLog.innerHTML.substring(0, 100000);
-        }
+        consoleLog(`Waiting ${waitTime}ms before checking again.`);
         await timer(waitTime);
         lastRelist += waitTime;
     }
-    consoleLog.innerHTML = "Stopped relisting process<br/>" + consoleLog.innerHTML;
+    consoleLog("Stopped relisting process");
 }
 
 function clickFn() {
@@ -104,14 +113,14 @@ function clickFn() {
     'use strict';
     console.log("Starting auto relist");
     $.noConflict( true );
-    jQuery(document).ready(function() {
+    $(document).ready(function() {
         button.innerHTML = "Start Auto-relister";
         button.style = blueButtonStyle;
         button.started = false;
         button.onclick = clickFn;
         document.body.appendChild(button);
 
-        consoleLog.style = "color:#000;top:10px;left:155px;width:500px;height:100px;overflow:auto;max-height:100px;position:absolute;z-index: 9999;background-color:#fefeff;font-family:monospace;font-size:small";
-        document.body.appendChild(consoleLog);
+        cl.style = "color:#000;top:10px;left:155px;width:500px;height:100px;overflow:auto;max-height:100px;position:absolute;z-index: 9999;background-color:#fefeff;font-family:monospace;font-size:small";
+        document.body.appendChild(cl);
     });
 })();
