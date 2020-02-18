@@ -54,20 +54,20 @@ async function relister() {
             // Reload transfer list
             // first the home page
             _appMain.getRootViewController().setGameViewTab(UTGameTabBarController.TabTag.HOME);
-            var homePageWait = Math.trunc(15000 + (5000 * Math.random()));
-            await timer(homePageWait);
-            lastRelist += homePageWait;
+            var homePageWait1 = Math.trunc(15000 + (5000 * Math.random()));
+            await timer(homePageWait1);
+            lastRelist += homePageWait1;
             // reload transfer list
             gotoLinkController._gotoTransferList();
         } else {
             consoleLog.innerHTML = `Couldn't find relist button or it is not visible.<br/>` + consoleLog.innerHTML;
             // randomly go to the home page and back to keep session alive (10% chance)
             if (Math.random() * 100 > 90) {
-                var homePageWait = Math.trunc(10000 + (35000 * Math.random()));
+                var homePageWait2 = Math.trunc(10000 + (35000 * Math.random()));
                 consoleLog.innerHTML = `Randomly loading home page, waiting ${homePageWait}ms and going back.<br/>` + consoleLog.innerHTML;
                 _appMain.getRootViewController().setGameViewTab(UTGameTabBarController.TabTag.HOME);
-                await homePageWait;
-                lastRelist += homePageWait;
+                await timer(homePageWait2);
+                lastRelist += homePageWait2;
                 // reload transfer list
                 gotoLinkController._gotoTransferList();
             }
