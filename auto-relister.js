@@ -14,6 +14,8 @@
 
 var button = document.createElement("Button");
 var consoleLog = document.createElement("div");
+var blueButtonStyle = "top:10px;right:250px;position:absolute;z-index: 9999;background-color:#ADD8E6;border-radius:5px;padding:5px";
+var redButtonStyle = "top:10px;right:250px;position:absolute;z-index: 9999;background-color:#E66666;border-radius:5px;padding:5px";
 
 function timer(ms) {
     return new Promise(res => setTimeout(res, ms));
@@ -22,10 +24,12 @@ function timer(ms) {
 var selector = "body > main > section > section > div.ut-navigation-container-view--content > div > div > div > section:nth-child(2) > header > button";
 
 var gotoLinkController = null;
-var lastRelist = 0;
+// lastRelist starts at 300000 so that when we start the relister for the first time, it will execute.
+var lastRelist = 300000;
 
 async function relister() {
     consoleLog.innerHTML = "Relisting ...<br/>" + consoleLog.innerHTML;
+    await timer(5000);
     while (button.started) {
         var relistButton = document.querySelector(selector);
         var waitTime = Math.trunc(45000 + (45000 * Math.random()));
@@ -54,10 +58,11 @@ async function relister() {
             gotoLinkController._gotoTransferList();
         } else {
             consoleLog.innerHTML = `Couldn't find relist button or it is not visible.<br/>` + consoleLog.innerHTML;
-            // randomly go to store and back to keep session alive
+            // randomly go to the home page and back to keep session alive (10% chance)
             if (Math.random() * 100 > 90) {
-                consoleLog.innerHTML = `Randomly loading store and going back.<br/>` + consoleLog.innerHTML;
-                gotoLinkController._gotoStore();
+                var homePageWait = Math.trunc(10000 + (35000 * Math.random()));
+                consoleLog.innerHTML = `Randomly loading home page, waiting ${homePageWait}ms and going back.<br/>` + consoleLog.innerHTML;
+                _appMain.getRootViewController().setGameViewTab(UTGameTabBarController.TabTag.HOME);
                 await timer(10000 + (35000 * Math.random()));
                 // reload transfer list
                 gotoLinkController._gotoTransferList();
@@ -82,76 +87,14 @@ function clickFn() {
     if (!button.started) {
         button.started = true;
         button.innerHTML = "Stop Auto-relister"
+        button.style = redButtonStyle;
         relister();
     } else {
         button.innerHTML = "Start Auto-relister";
+        button.style = blueButtonStyle;
         button.started = false;
     }
 }
-
-function simulate(element, eventName){
-    var options = extend(defaultOptions, arguments[2] || {});
-    var oEvent, eventType = null;
-
-    for (var name in eventMatchers) {
-        if (eventMatchers[name].test(eventName)) {
-            eventType = name;
-            break;
-        }
-    }
-
-    if (!eventType) {
-        throw new SyntaxError('Only HTMLEvents and MouseEvents interfaces are supported');
-    }
-
-    if (document.createEvent) {
-        oEvent = document.createEvent(eventType);
-        if (eventType == 'HTMLEvents') {
-            oEvent.initEvent(eventName, options.bubbles, options.cancelable);
-        }
-        else
-        {
-            oEvent.initMouseEvent(eventName, options.bubbles, options.cancelable, document.defaultView,
-                                  options.button, options.pointerX, options.pointerY, options.pointerX, options.pointerY,
-                                  options.ctrlKey, options.altKey, options.shiftKey, options.metaKey, options.button, element);
-        }
-        console.log(`Dispatching event ${oEvent}`);
-        element.dispatchEvent(oEvent);
-    }
-    else
-    {
-        options.clientX = options.pointerX;
-        options.clientY = options.pointerY;
-        var evt = document.createEventObject();
-        oEvent = extend(evt, options);
-        element.fireEvent('on' + eventName, oEvent);
-    }
-    return element;
-}
-
-function extend(destination, source) {
-    for (var property in source) {
-        destination[property] = source[property];
-    }
-    return destination;
-}
-
-var eventMatchers = {
-    'HTMLEvents': /^(?:load|unload|abort|error|select|change|submit|reset|focus|blur|resize|scroll)$/,
-    'MouseEvents': /^(?:click|dblclick|mouse(?:down|up|over|move|out))$/
-};
-
-var defaultOptions = {
-    pointerX: 0,
-    pointerY: 0,
-    button: 0,
-    ctrlKey: false,
-    altKey: false,
-    shiftKey: false,
-    metaKey: false,
-    bubbles: true,
-    cancelable: true
-};
 
 (function() {
     'use strict';
@@ -159,7 +102,7 @@ var defaultOptions = {
     $.noConflict( true );
     jQuery(document).ready(function() {
         button.innerHTML = "Start Auto-relister";
-        button.style = "top:10px;right:250px;position:absolute;z-index: 9999;background-color:#ADD8E6";
+        button.style = blueButtonStyle;
         button.started = false;
         button.onclick = clickFn;
         document.body.appendChild(button);
