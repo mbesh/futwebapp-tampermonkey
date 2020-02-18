@@ -3,8 +3,9 @@
 // @namespace    http://tampermonkey.net/
 // @version      0.1
 // @description  automatically relist all transfers
-// @author       You
-// @match        http://*/*
+// @author       mbesh
+// @match        https://www.easports.com/fifa/ultimate-team/web-app/*
+// @match        https://www.easports.com/*/fifa/ultimate-team/web-app/*
 // @grant        none
 // @require http://code.jquery.com/jquery-3.4.1.min.js
 // @run-at  document-end
